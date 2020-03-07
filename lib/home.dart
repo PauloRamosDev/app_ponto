@@ -1,7 +1,9 @@
-import 'package:appponto/check_point.dart';
-import 'package:appponto/nav.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
+import 'check_point.dart';
+import 'firebase/firebase_helper.dart';
+import 'nav.dart';
+import 'sqlite/funcionario_dao.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,6 +11,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    FirebaseHelper().getFuncionarios().then((funcionarios) {
+      funcionarios.forEach((funcionario) {
+        FuncionarioDAO().insert(funcionario);
+      });
+
+      print('TOTAL DE FUNCIONARIOS = ${funcionarios.length}');
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,15 +50,30 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text('MATRICULA',style: TextStyle(color: Colors.purple),),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(textAlign: TextAlign.center,keyboardType: TextInputType.numberWithOptions(),maxLength: 7,),
+                  Text(
+                    'MATRICULA',
+                    style: TextStyle(color: Colors.purple),
                   ),
-                  Text('SENHA',style: TextStyle(color: Colors.purple),),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(textAlign: TextAlign.center,keyboardType: TextInputType.numberWithOptions(),maxLength: 4,obscureText: true,),
+                    child: TextFormField(
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.numberWithOptions(),
+                      maxLength: 7,
+                    ),
+                  ),
+                  Text(
+                    'SENHA',
+                    style: TextStyle(color: Colors.purple),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.numberWithOptions(),
+                      maxLength: 4,
+                      obscureText: true,
+                    ),
                   ),
                   RaisedButton(
                     onPressed: () {

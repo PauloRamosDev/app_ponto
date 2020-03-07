@@ -13,7 +13,10 @@ class _RelogioState extends State<Relogio> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text(hora(),style: TextStyle(fontWeight:FontWeight.bold,fontSize: 30),),
+      child: Text(
+        hora(),
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+      ),
     );
   }
 
@@ -22,9 +25,7 @@ class _RelogioState extends State<Relogio> {
   }
 
   _set() {
-    setState(() {
-      print('setstate');
-    });
+    setState(() {});
   }
 
   @override
@@ -41,7 +42,6 @@ class _RelogioState extends State<Relogio> {
 }
 
 String hora() {
-
   return DateTime.now().hour.toString() +
       ':' +
       DateTime.now().minute.toString().padLeft(2, '0') +
