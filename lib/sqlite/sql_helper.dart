@@ -48,7 +48,9 @@ class SqliteHelper {
         'registro TEXT,'
         'pathFoto TEXT,'
         'horario TEXT,'
-        'data TEXT'
+        'data TEXT,'
+        'sync INTEGER,'
+        'matricula TEXT'
         ')');
   }
 

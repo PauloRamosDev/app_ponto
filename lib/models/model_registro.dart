@@ -4,15 +4,17 @@ class Registro {
   static const terminoPausa = 'TERMINO DA PAUSA';
   static const termino = 'TERMINO DE JORNADA';
 
-  double longitude;
-  double latitude;
+  String longitude;
+  String latitude;
   String registro; //1 - INICIO 2 - INICIO PAUSA 3 - TERMINO PAUSA 4 - TERMINO
   String pathFoto;
   String horario; // hh:mm:ss
   String data; // mm-dd-yyyy
+  int sync; // 0 - falso 1 - verdadeiro
+  String matricula;
 
   Registro(this.longitude, this.latitude, this.registro, this.pathFoto,
-      this.horario, this.data);
+      this.horario, this.data, this.sync, this.matricula);
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
@@ -23,6 +25,9 @@ class Registro {
     map['pathFoto'] = pathFoto;
     map['horario'] = horario;
     map['data'] = data;
+    map['matricula'] = matricula;
+    map['sync'] = sync;
+
     return map;
   }
 
@@ -33,5 +38,7 @@ class Registro {
     this.pathFoto = map['pathFoto'];
     this.horario = map['horario'];
     this.data = map['data'];
+    this.matricula = map['matricula'];
+    this.sync = map['sync'];
   }
 }

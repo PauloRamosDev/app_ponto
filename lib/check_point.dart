@@ -1,18 +1,28 @@
 import 'package:appponto/bloc_check_point.dart';
-import 'file:///C:/Users/paulo/Desktop/apps_flutter/app_ponto/lib/models/model_registro.dart';
+import 'package:appponto/models/model_registro.dart';
 import 'package:appponto/nav.dart';
 import 'package:appponto/registro_ponto.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 
 class CheckPointPage extends StatefulWidget {
+  final matricula;
+  final List<Registro>listaCheckPoints;
+
+  CheckPointPage({@required this.matricula, @required this.listaCheckPoints});
+
   @override
   _CheckPointPageState createState() => _CheckPointPageState();
 }
 
 class _CheckPointPageState extends State<CheckPointPage> {
-
   BlocCheckPoint bloc = BlocCheckPoint();
+
+  @override
+  void initState() {
+    print(widget.listaCheckPoints?.length??0);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +45,20 @@ class _CheckPointPageState extends State<CheckPointPage> {
             ListTile(
               leading: Icon(Icons.access_time),
               title: Text(Registro.inicio),
-              subtitle: Text(bloc.fistRegister ==true?'OK':'Aguardando'),
-              trailing: bloc.fistRegister == false ? IconButton(
-                  icon: Icon(Icons.arrow_forward),
-                  onPressed: ()  {
-                     push(context, RegistroPage(Registro.inicio,bloc));
-                  }):null,
+              subtitle: Text(bloc.fistRegister == true ? 'OK' : 'Aguardando'),
+              trailing: bloc.fistRegister == false
+                  ? IconButton(
+                      icon: Icon(Icons.arrow_forward),
+                      onPressed: () {
+                        push(
+                            context,
+                            RegistroPage(
+                              bloc: bloc,
+                              marcacao: Registro.inicio,
+                              matricula: widget.matricula,
+                            ));
+                      })
+                  : null,
             ),
             ListTile(
               leading: Icon(Icons.access_time),
@@ -48,8 +66,14 @@ class _CheckPointPageState extends State<CheckPointPage> {
               subtitle: Text('Aguardando'),
               trailing: IconButton(
                   icon: Icon(Icons.arrow_forward),
-                  onPressed: ()  {
-                    push(context, RegistroPage(Registro.inicioPausa,bloc));
+                  onPressed: () {
+                    push(
+                        context,
+                        RegistroPage(
+                          marcacao: Registro.inicioPausa,
+                          bloc: bloc,
+                          matricula: widget.matricula,
+                        ));
                   }),
             ),
             ListTile(
@@ -58,8 +82,14 @@ class _CheckPointPageState extends State<CheckPointPage> {
               subtitle: Text('Aguardando'),
               trailing: IconButton(
                   icon: Icon(Icons.arrow_forward),
-                  onPressed: ()  {
-                     push(context, RegistroPage(Registro.terminoPausa,bloc));
+                  onPressed: () {
+                    push(
+                        context,
+                        RegistroPage(
+                          marcacao: Registro.terminoPausa,
+                          bloc: bloc,
+                          matricula: widget.matricula,
+                        ));
                   }),
             ),
             ListTile(
@@ -68,8 +98,14 @@ class _CheckPointPageState extends State<CheckPointPage> {
               subtitle: Text('Aguardando'),
               trailing: IconButton(
                   icon: Icon(Icons.arrow_forward),
-                  onPressed: ()  {
-                     push(context, RegistroPage(Registro.termino,bloc));
+                  onPressed: () {
+                    push(
+                        context,
+                        RegistroPage(
+                          marcacao: Registro.termino,
+                          bloc: bloc,
+                          matricula: widget.matricula,
+                        ));
                   }),
             ),
             Card(

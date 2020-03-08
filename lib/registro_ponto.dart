@@ -4,6 +4,7 @@ import 'package:appponto/bloc_check_point.dart';
 import 'package:appponto/firebase/firebase_helper.dart';
 import 'package:appponto/nav.dart';
 import 'package:appponto/relogio.dart';
+import 'package:appponto/sqlite/registro_dao.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,9 +14,11 @@ import 'models/model_registro.dart';
 
 class RegistroPage extends StatefulWidget {
   final marcacao;
+  final matricula;
   final BlocCheckPoint bloc;
 
-  RegistroPage(this.marcacao, this.bloc);
+  RegistroPage(
+      {@required this.marcacao, @required this.matricula, @required this.bloc});
 
   @override
   _RegistroPageState createState() => _RegistroPageState();
@@ -59,16 +62,23 @@ class _RegistroPageState extends State<RegistroPage> {
                   var file = await getImage();
 
                   var registro = Registro(
-                      longitude,
-                      latitude,
+                      longitude.toString(),
+                      latitude.toString(),
                       widget.marcacao,
                       file.path,
                       DateFormat('HH:mm:ss').format(DateTime.now()),
-                      DateFormat('MM-dd-yyyy').format(DateTime.now()));
+                      DateFormat('MM-dd-yyyy').format(DateTime.now()),
+                      0,
+                      widget.matricula);
 
                   print(registro.toMap().toString());
 
-                  await FirebaseHelper().setPonto('1004566', registro);
+                  int idRegistro = await RegistroDAO().insert(registro);
+
+                  var operacao = await FirebaseHelper()
+                      .setPonto(widget.matricula, registro, idRegistro);
+
+                  print('Operacao firebase = $operacao');
 
                   pop(context, tipo: registro);
 
