@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:appponto/utils.dart';
 import 'package:flutter/material.dart';
 
 class Relogio extends StatefulWidget {
@@ -14,7 +15,7 @@ class _RelogioState extends State<Relogio> {
   Widget build(BuildContext context) {
     return Container(
       child: Text(
-        hora(),
+        Utils.getHora(),
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
       ),
     );

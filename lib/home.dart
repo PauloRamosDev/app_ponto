@@ -1,6 +1,6 @@
 import 'package:appponto/sqlite/registro_dao.dart';
+import 'package:appponto/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import 'check_point.dart';
 import 'firebase/firebase_helper.dart';
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
               colors: Colors.purple,
             ),
           ),
-          Text(''),
+          Text(''), //nome da empresa
           Card(
             margin: EdgeInsets.all(16),
             elevation: 4,
@@ -80,13 +80,13 @@ class _HomePageState extends State<HomePage> {
                   RaisedButton(
                     onPressed: () async {
                       //TODO: adicionar data como provider da aplicação
-                      var listCheckPoint = await RegistroDAO().findByDayAndMatricula(
-                          DateFormat('MM-dd-yyyy').format(DateTime.now()),'1004568');
+                      var listCheckPoint = await RegistroDAO()
+                          .findByDayAndMatricula(Utils.getData(), '1004566');
 
                       push(
                           context,
                           CheckPointPage(
-                              matricula: '1004567',
+                              matricula: '1004566',
                               listaCheckPoints: listCheckPoint));
                     },
                     color: Colors.greenAccent,

@@ -5,6 +5,7 @@ import 'package:appponto/firebase/firebase_helper.dart';
 import 'package:appponto/nav.dart';
 import 'package:appponto/relogio.dart';
 import 'package:appponto/sqlite/registro_dao.dart';
+import 'package:appponto/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -66,8 +67,8 @@ class _RegistroPageState extends State<RegistroPage> {
                       latitude.toString(),
                       widget.marcacao,
                       file.path,
-                      DateFormat('HH:mm:ss').format(DateTime.now()),
-                      DateFormat('MM-dd-yyyy').format(DateTime.now()),
+                      Utils.getHora(),
+                      Utils.getData(),
                       0,
                       widget.matricula);
 
@@ -80,9 +81,7 @@ class _RegistroPageState extends State<RegistroPage> {
 
                   print('Operacao firebase = $operacao');
 
-                  pop(context, tipo: registro);
-
-                  widget.bloc.fistRegister = true;
+                  pop(context, tipo: idRegistro);
                 },
                 color: Colors.greenAccent,
                 child: Text(

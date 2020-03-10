@@ -19,8 +19,10 @@ class FirebaseHelper {
         .collection(registro.data)
         .document(registro.registro);
 
-    var doc = await path.get().catchError(
-        (error) => print('erro = ${error.details}'));
+    var doc = await path
+        .get()
+        .timeout(Duration(seconds: 5),onTimeout: ()=>null)
+        .catchError((error) => print('erro = ${error.details}'));
 
     if (doc == null) return false;
 

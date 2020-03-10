@@ -2,12 +2,13 @@ import 'package:appponto/bloc_check_point.dart';
 import 'package:appponto/models/model_registro.dart';
 import 'package:appponto/nav.dart';
 import 'package:appponto/registro_ponto.dart';
+import 'package:appponto/utils.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 
 class CheckPointPage extends StatefulWidget {
   final matricula;
-  final List<Registro>listaCheckPoints;
+  final List<Registro> listaCheckPoints;
 
   CheckPointPage({@required this.matricula, @required this.listaCheckPoints});
 
@@ -20,8 +21,15 @@ class _CheckPointPageState extends State<CheckPointPage> {
 
   @override
   void initState() {
-    print(widget.listaCheckPoints?.length??0);
+    bloc.registros = widget.listaCheckPoints;
+    print(widget.listaCheckPoints?.length ?? 0);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    bloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -45,8 +53,10 @@ class _CheckPointPageState extends State<CheckPointPage> {
             ListTile(
               leading: Icon(Icons.access_time),
               title: Text(Registro.inicio),
-              subtitle: Text(bloc.fistRegister == true ? 'OK' : 'Aguardando'),
-              trailing: bloc.fistRegister == false
+              subtitle: Text(bloc.contain(Registro.inicio) == true
+                  ? bloc.registros[0].horario
+                  : 'Aguardando'),
+              trailing: !bloc.contain(Registro.inicio)
                   ? IconButton(
                       icon: Icon(Icons.arrow_forward),
                       onPressed: () {
@@ -63,50 +73,62 @@ class _CheckPointPageState extends State<CheckPointPage> {
             ListTile(
               leading: Icon(Icons.access_time),
               title: Text(Registro.inicioPausa),
-              subtitle: Text('Aguardando'),
-              trailing: IconButton(
-                  icon: Icon(Icons.arrow_forward),
-                  onPressed: () {
-                    push(
-                        context,
-                        RegistroPage(
-                          marcacao: Registro.inicioPausa,
-                          bloc: bloc,
-                          matricula: widget.matricula,
-                        ));
-                  }),
+              subtitle: Text(bloc.contain(Registro.inicioPausa) == true
+                  ? bloc.registros[1].horario
+                  : 'Aguardando'),
+              trailing: !bloc.contain(Registro.inicioPausa)
+                  ? IconButton(
+                      icon: Icon(Icons.arrow_forward),
+                      onPressed: () {
+                        push(
+                            context,
+                            RegistroPage(
+                              bloc: bloc,
+                              marcacao: Registro.inicioPausa,
+                              matricula: widget.matricula,
+                            ));
+                      })
+                  : null,
             ),
             ListTile(
               leading: Icon(Icons.access_time),
               title: Text(Registro.terminoPausa),
-              subtitle: Text('Aguardando'),
-              trailing: IconButton(
-                  icon: Icon(Icons.arrow_forward),
-                  onPressed: () {
-                    push(
-                        context,
-                        RegistroPage(
-                          marcacao: Registro.terminoPausa,
-                          bloc: bloc,
-                          matricula: widget.matricula,
-                        ));
-                  }),
+              subtitle: Text(bloc.contain(Registro.terminoPausa) == true
+                  ? bloc.registros[2].horario
+                  : 'Aguardando'),
+              trailing: !bloc.contain(Registro.terminoPausa)
+                  ? IconButton(
+                      icon: Icon(Icons.arrow_forward),
+                      onPressed: () {
+                        push(
+                            context,
+                            RegistroPage(
+                              bloc: bloc,
+                              marcacao: Registro.terminoPausa,
+                              matricula: widget.matricula,
+                            ));
+                      })
+                  : null,
             ),
             ListTile(
               leading: Icon(Icons.access_time),
               title: Text(Registro.termino),
-              subtitle: Text('Aguardando'),
-              trailing: IconButton(
-                  icon: Icon(Icons.arrow_forward),
-                  onPressed: () {
-                    push(
-                        context,
-                        RegistroPage(
-                          marcacao: Registro.termino,
-                          bloc: bloc,
-                          matricula: widget.matricula,
-                        ));
-                  }),
+              subtitle: Text(bloc.contain(Registro.termino) == true
+                  ? bloc.registros[3].horario
+                  : 'Aguardando'),
+              trailing: !bloc.contain(Registro.termino)
+                  ? IconButton(
+                      icon: Icon(Icons.arrow_forward),
+                      onPressed: () {
+                        push(
+                            context,
+                            RegistroPage(
+                              bloc: bloc,
+                              marcacao: Registro.termino,
+                              matricula: widget.matricula,
+                            ));
+                      })
+                  : null,
             ),
             Card(
               elevation: 3,
@@ -118,7 +140,12 @@ class _CheckPointPageState extends State<CheckPointPage> {
                       'TOTAL DA JORNADA',
                       style: TextStyle(color: Colors.purple),
                     ),
-                    Text('Aguardando Registros...'),
+                    Text(bloc.contain(Registro.inicio) &&
+                            bloc.contain(Registro.termino)
+                        ? Utils.horaDiferencaMinutos(bloc.registros[0].horario,
+                                bloc.registros[3].horario).toString()
+                            +' Minutos'
+                        : 'Aguardando Registros...'),
                     SizedBox(
                       height: 10,
                     ),
@@ -126,7 +153,12 @@ class _CheckPointPageState extends State<CheckPointPage> {
                       'TOTAL DA PAUSA',
                       style: TextStyle(color: Colors.purple),
                     ),
-                    Text('Aguardando Registros...'),
+                    Text(bloc.contain(Registro.inicioPausa) &&
+                            bloc.contain(Registro.terminoPausa)
+                        ? Utils.horaDiferencaMinutos(bloc.registros[1].horario,
+                                bloc.registros[2].horario)
+                            .toString() +' Minutos'
+                        : 'Aguardando Registros...'),
                   ],
                 ),
               ),

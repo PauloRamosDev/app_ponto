@@ -1,29 +1,32 @@
 import 'dart:async';
 
-import 'file:///C:/Users/paulo/Desktop/apps_flutter/app_ponto/lib/models/model_registro.dart';
-
-class BlocCheckPoint{
+import 'models/model_registro.dart';
 
 
-  bool fistRegister = false;
-  bool secondRegister = false;
-  bool third = false;
-  bool fourthRegister = false;
+class BlocCheckPoint {
 
   List<Registro> registros;
 
   StreamController _controller = StreamController();
 
   get stream => _controller.stream;
+
   get sink => _controller.sink;
 
+  bool contain(String marcacao) {
+    bool contain = false;
 
 
+    if(registros!=null)
+    registros.forEach((element) {
+      // ignore: unnecessary_statements
+      element.registro == marcacao ? contain = true : null;
+    });
 
-
-
-  dispose(){
-    _controller.close();
+    return contain;
   }
 
+  dispose() {
+    _controller.close();
+  }
 }
