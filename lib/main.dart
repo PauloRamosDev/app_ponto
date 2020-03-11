@@ -1,4 +1,4 @@
-import 'package:appponto/home.dart';
+import 'package:appponto/pages/home/home.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());

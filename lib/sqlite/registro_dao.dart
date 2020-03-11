@@ -77,4 +77,16 @@ class RegistroDAO {
         .rawQuery('select count(*) from ${SqliteHelper.tableRegistros}');
     return Sqflite.firstIntValue(list);
   }
+
+  Future<List<Registro>> registrosNoSync() async {
+    var dbClient = await db;
+    final list = await dbClient.rawQuery(
+        'select * from ${SqliteHelper.tableRegistros} where sync = 0');
+
+    if (list.length > 0) {
+      return list.map((e) => Registro.fromMap(e)).toList();
+    }
+
+    return null;
+  }
 }

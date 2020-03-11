@@ -15,4 +15,23 @@ class Utils {
 
     return dois.difference(um).inMinutes;
   }
+
+  bool contain(String marcacao,registros) {
+    bool contain = false;
+
+    if (registros != null)
+      registros.forEach((element) {
+        // ignore: unnecessary_statements
+        element.registro == marcacao ? contain = true : null;
+      });
+
+    return contain;
+  }
+
+  int getIndex(String marcacao,registros) {
+    for (var i = 0; i < registros.length; ++i) {
+      if (registros[i].registro == marcacao) return i;
+    }
+    return null;
+  }
 }

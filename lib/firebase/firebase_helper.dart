@@ -2,14 +2,14 @@ import 'package:appponto/models/funcionario_model.dart';
 import 'package:appponto/models/model_registro.dart';
 import 'package:appponto/sqlite/registro_dao.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 
 class FirebaseHelper {
   Firestore fb = Firestore.instance;
 
   FirebaseHelper();
 
-  Future<bool> setPonto(matricula, Registro registro, int idSqlite) async {
+  Future<bool> setPonto(
+      String matricula, Registro registro, int idSqlite) async {
     //appName - matricula - data - tipoRegistro
     registro.sync = 1;
 
@@ -21,7 +21,7 @@ class FirebaseHelper {
 
     var doc = await path
         .get()
-        .timeout(Duration(seconds: 5),onTimeout: ()=>null)
+        .timeout(Duration(seconds: 5), onTimeout: () => null)
         .catchError((error) => print('erro = ${error.details}'));
 
     if (doc == null) return false;
@@ -37,8 +37,6 @@ class FirebaseHelper {
       await path.setData(registro.toMap());
 
       if ((await path.get()).exists) {
-        //ponto registrado no firebase
-        //alterar registro para sync 1 no sqlite
         RegistroDAO().update(registro, idSqlite);
 
         print('sqlite atualizado e salvo no firebase');
@@ -59,5 +57,20 @@ class FirebaseHelper {
     return funcionarios.documents
         .map((snapshot) => Funcionario.fromMap(snapshot.data))
         .toList();
+  }
+
+  sync(List<Registro> listaRegistros, matricula) {
+    List<Registro> erros = [];
+
+    listaRegistros.forEach((registro) async {
+
+      bool result = await setPonto(matricula, registro, registro.id);
+
+      if (!result) {
+        erros.add(registro);
+      }
+    });
+
+    return erros;
   }
 }
