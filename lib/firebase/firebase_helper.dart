@@ -8,14 +8,14 @@ class FirebaseHelper {
 
   FirebaseHelper();
 
-  Future<bool> setPonto(
-      String matricula, Registro registro, int idSqlite) async {
+  Future<bool> setPonto(Registro registro, int idSqlite) async {
     //appName - matricula - data - tipoRegistro
     registro.sync = 1;
+    registro.id = idSqlite;
 
     var path = fb
         .collection('app_ponto')
-        .document(matricula)
+        .document(registro.matricula)
         .collection(registro.data)
         .document(registro.registro);
 
@@ -59,12 +59,11 @@ class FirebaseHelper {
         .toList();
   }
 
-  sync(List<Registro> listaRegistros, matricula) {
+  sync(List<Registro> listaRegistros) {
     List<Registro> erros = [];
 
     listaRegistros.forEach((registro) async {
-
-      bool result = await setPonto(matricula, registro, registro.id);
+      bool result = await setPonto(registro, registro.id);
 
       if (!result) {
         erros.add(registro);

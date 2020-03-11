@@ -1,10 +1,13 @@
+import 'package:appponto/firebase/firebase_helper.dart';
 import 'package:appponto/pages/home/home_bloc.dart';
+import 'package:appponto/sqlite/funcionario_dao.dart';
 import 'package:appponto/sqlite/registro_dao.dart';
 import 'package:appponto/utils.dart';
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 
-import '../checkpoints/check_point.dart';
 import '../../nav.dart';
+import '../checkpoints/check_point.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,23 +16,26 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   BlocHome bloc = BlocHome();
+  var noSync = '0';
 
   @override
   void initState() {
-    //todo: função para buscar funcionario e salvarlocalmente no sqlite
+    //buscar funcionarios no firebase e add no sqlite
 
-
-    RegistroDAO().registrosNoSync().then((noSync){
-      noSync.forEach((r)=>print(r.toMap().toString()));
+    FirebaseHelper().getFuncionarios().then((value) {
+      value.forEach((element) {
+        FuncionarioDAO().insert(element);
+      });
     });
 
-    //    FirebaseHelper().getFuncionarios().then((funcionarios) {
-//      funcionarios.forEach((funcionario) {
-//        FuncionarioDAO().insert(funcionario);
-//      });
-//
-//      print('TOTAL DE FUNCIONARIOS = ${funcionarios.length}');
-//    });
+//sync registro não sync
+//    bloc.syncAll();
+
+    RegistroDAO().registrosNoSync().then((value) {
+      noSync = value != null ? value.length.toString() : '0';
+      setState(() {});
+    });
+
     super.initState();
   }
 
@@ -39,10 +45,22 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         elevation: 0,
         title: Text('Home'),
+        actions: <Widget>[
+          Badge(
+            badgeContent: Text(noSync),
+            badgeColor: Theme.of(context).accentColor,
+            child: IconButton(
+                icon: Icon(Icons.refresh),
+                onPressed: () {
+                  bloc.syncAll();
+                }),
+            animationType: BadgeAnimationType.slide,
+            position: BadgePosition.topRight(top: 0, right: 8),
+          ),
+        ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-//        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Center(

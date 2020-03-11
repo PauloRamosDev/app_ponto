@@ -38,16 +38,7 @@ class _CheckPointPageState extends State<CheckPointPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ponto'),
-        actions: <Widget>[
-          Badge(
-            badgeContent: Text(''),
-            badgeColor: Theme.of(context).accentColor,
-            child: IconButton(icon: Icon(Icons.refresh), onPressed: () {}),
-            animationType: BadgeAnimationType.slide,
-            position: BadgePosition.topRight(top: 0, right: 8),
-          ),
-        ],
+        title: Text('Registros'),
       ),
       body: SingleChildScrollView(
         child: Column(

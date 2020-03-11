@@ -74,10 +74,10 @@ class _RegistroPageState extends State<RegistroPage> {
 
                   print(registro.toMap().toString());
 
-                  int idRegistro = await RegistroDAO().insert(registro);
+                  int idSqlite = await RegistroDAO().insert(registro);
 
                   var operacao = await FirebaseHelper()
-                      .setPonto(widget.matricula, registro, idRegistro);
+                      .setPonto(registro, idSqlite);
 
                   print('Operacao firebase = $operacao');
 

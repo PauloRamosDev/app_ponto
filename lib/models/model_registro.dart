@@ -15,7 +15,7 @@ class Registro {
   String matricula;
 
   Registro(this.longitude, this.latitude, this.registro, this.pathFoto,
-      this.horario, this.data, this.sync, this.matricula,{this.id});
+      this.horario, this.data, this.sync, this.matricula);
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
