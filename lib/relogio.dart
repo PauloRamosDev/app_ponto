@@ -9,7 +9,7 @@ class Relogio extends StatefulWidget {
 }
 
 class _RelogioState extends State<Relogio> {
-  var _time;
+  Timer _time;
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +40,4 @@ class _RelogioState extends State<Relogio> {
     _time.cancel();
     super.dispose();
   }
-}
-
-String hora() {
-  return DateTime.now().hour.toString() +
-      ':' +
-      DateTime.now().minute.toString().padLeft(2, '0') +
-      ':' +
-      DateTime.now().second.toString().padLeft(2, '0');
 }

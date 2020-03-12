@@ -8,14 +8,19 @@ class BlocHome {
   TextEditingController senha = TextEditingController();
 
   Future<bool> validar() async {
-    return (await FuncionarioDAO().findByMatricula(matricula.text)) != null;
+    var func = await FuncionarioDAO().findByMatricula(matricula.text);
+
+    return func.senha == senha.text && func.matricula == matricula.text&&senha.text.length>3&&matricula.text.length>6;
   }
 
-  syncAll() {
-    RegistroDAO().registrosNoSync().then((noSync) {
-      print('no sync = ${noSync?.length}');
+  Future<int> syncAll() async {
+    var noSync = await RegistroDAO().registrosNoSync();
 
-      if (noSync != null && noSync.length > 0) FirebaseHelper().sync(noSync);
-    });
+    print('no sync = ${noSync?.length}');
+
+    if (noSync != null && noSync.length > 0) {
+      return await FirebaseHelper('minhaEmpresa').sync(noSync);
+    }
+    return null;
   }
 }

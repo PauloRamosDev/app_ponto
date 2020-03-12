@@ -4,24 +4,47 @@ import 'package:appponto/sqlite/registro_dao.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseHelper {
-  Firestore fb = Firestore.instance;
 
-  FirebaseHelper();
+  Firestore fb = Firestore.instance;
+  final nomeEmpresa;
+
+  FirebaseHelper(this.nomeEmpresa);
+
+  getEmpresa() async {
+    //appName - empresa
+    var path = fb.document('app_ponto/$nomeEmpresa');
+
+    return await path.get();
+  }
+
+  Future<List<Funcionario>> getFuncionarios() async {
+    //appName - empresa - funcionarios
+
+    var path = fb.collection('app_ponto/$nomeEmpresa/funcionarios');
+
+    var funcionarios = await path.getDocuments();
+
+    return funcionarios.documents
+        .map((snapshot) => Funcionario.fromMap(snapshot.data))
+        .toList();
+  }
 
   Future<bool> setPonto(Registro registro, int idSqlite) async {
-    //appName - matricula - data - tipoRegistro
+    //appName - empresa -  matricula - matricula - data - tipoRegistro
     registro.sync = 1;
     registro.id = idSqlite;
 
     var path = fb
         .collection('app_ponto')
+        .document(nomeEmpresa)
+        .collection('funcionarios')
         .document(registro.matricula)
         .collection(registro.data)
         .document(registro.registro);
 
     var doc = await path
         .get()
-        .timeout(Duration(seconds: 5), onTimeout: () => null)
+        .timeout(Duration(seconds: 3), onTimeout: () => null)
         .catchError((error) => print('erro = ${error.details}'));
 
     if (doc == null) return false;
@@ -49,27 +72,19 @@ class FirebaseHelper {
     }
   }
 
-  Future<List<Funcionario>> getFuncionarios() async {
-    var path = fb.collection('app_ponto');
+  Future<int> sync(List<Registro> listaRegistros) async {
+    var erros = 0;
 
-    var funcionarios = await path.getDocuments();
-
-    return funcionarios.documents
-        .map((snapshot) => Funcionario.fromMap(snapshot.data))
-        .toList();
-  }
-
-  sync(List<Registro> listaRegistros) {
-    List<Registro> erros = [];
-
-    listaRegistros.forEach((registro) async {
-      bool result = await setPonto(registro, registro.id);
+    for (var i = 0; i < listaRegistros.length; ++i) {
+      bool result = await setPonto(listaRegistros[i], listaRegistros[i].id);
+      print(result);
 
       if (!result) {
-        erros.add(registro);
+        erros++;
       }
-    });
+    }
 
     return erros;
   }
+
 }

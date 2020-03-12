@@ -38,6 +38,7 @@ class SqliteHelper {
     await db.execute('CREATE TABLE $tableName('
         'id INTEGER PRIMARY KEY,'
         'nome TEXT NOT NULL,'
+        'senha TEXT NOT NULL,'
         'matricula TEXT NOT NULL UNIQUE'
         ')');
 

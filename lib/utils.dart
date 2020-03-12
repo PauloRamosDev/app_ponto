@@ -1,6 +1,21 @@
+import 'dart:io';
+
+import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class Utils {
+
+  static Future<Position> getGps() async {
+    return await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  }
+
+  static Future<File> getImage() async {
+    return await ImagePicker.pickImage(
+        source: ImageSource.camera, maxWidth: 1024, maxHeight: 1024);
+  }
+
   static String getData() {
     return DateFormat('yyyy-MM-dd').format(DateTime.now());
   }
@@ -34,4 +49,6 @@ class Utils {
     }
     return null;
   }
+
+
 }
