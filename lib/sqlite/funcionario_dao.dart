@@ -8,7 +8,7 @@ class FuncionarioDAO {
 
   Future<int> insert(Funcionario funcionario) async {
     var dbClient = await db;
-    var id = await dbClient.insert(SqliteHelper.tableName, funcionario.toMap(),
+    var id = await dbClient.insert(SqliteHelper.tableFuncionario, funcionario.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     return id;
   }
@@ -16,7 +16,7 @@ class FuncionarioDAO {
   Future<Funcionario> findByMatricula(String matricula) async {
     var dbClient = await db;
     final list = await dbClient.rawQuery(
-        'select * from ${SqliteHelper.tableName} where matricula = ?',
+        'SELECT * FROM ${SqliteHelper.tableFuncionario} WHERE matricula = ?',
         [matricula]);
 
     if (list.length > 0) {
@@ -30,7 +30,7 @@ class FuncionarioDAO {
     final dbClient = await db;
 
     final list =
-        await dbClient.rawQuery('select * from ${SqliteHelper.tableName}');
+        await dbClient.rawQuery('SELECT * FROM ${SqliteHelper.tableFuncionario}');
 
     final funcionarios =
         list.map<Funcionario>((json) => Funcionario.fromMap(json)).toList();
@@ -41,17 +41,15 @@ class FuncionarioDAO {
   Future deleteAll() async {
     var dbClient = await db;
 
-    await dbClient.rawQuery('DROP TABLE IF EXISTS ${SqliteHelper.tableName}');
-
-    return await dbClient.rawQuery(
-        'CREATE TABLE IF NOT EXISTS ${SqliteHelper.tableName}(id INTEGER PRIMARY KEY)');
+    return await dbClient
+        .rawQuery('DELETE FROM ${SqliteHelper.tableFuncionario}');
   }
 
   Future<int> count() async {
     final dbClient = await db;
 
     final list = await dbClient
-        .rawQuery('select count(*) from ${SqliteHelper.tableName}');
+        .rawQuery('SELECT count(*) FROM ${SqliteHelper.tableFuncionario}');
     return Sqflite.firstIntValue(list);
   }
 }

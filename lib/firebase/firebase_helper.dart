@@ -1,3 +1,4 @@
+import 'package:appponto/models/empresa_model.dart';
 import 'package:appponto/models/funcionario_model.dart';
 import 'package:appponto/models/model_registro.dart';
 import 'package:appponto/sqlite/registro_dao.dart';
@@ -8,22 +9,44 @@ import '../preferences.dart';
 
 class FirebaseHelper {
   Firestore fb = Firestore.instance;
-  final nomeEmpresa;
+  final idEmpresa;
   final prefs = BlocProvider.getBloc<Prefs>();
 
-  FirebaseHelper(this.nomeEmpresa);
+  FirebaseHelper(this.idEmpresa);
 
   Future<Map<String, dynamic>> getEmpresa() async {
     //appName - empresa
-    var path = fb.document('app_ponto/$nomeEmpresa');
+    var path = fb.document('app_ponto/$idEmpresa');
 
     return (await path.get()).data;
+  }
+
+  Future<int> setEmpresa(Empresa empresa) async {
+    //appName - empresa
+
+    //1 - empresa criada 0 - empresa existe 2 - falha
+    var path = fb.document('app_ponto/$idEmpresa');
+
+    var doc = await path.get();
+
+    if (doc.exists) {
+      return 0;
+    } else {
+      await path
+          .setData(empresa.toMap())
+          .catchError((error) => print(error.toString()));
+      if ((await path.get()).exists) {
+        return 1;
+      } else {
+        return 2;
+      }
+    }
   }
 
   Future<List<Funcionario>> getFuncionarios() async {
     //appName - empresa - funcionarios
 
-    var path = fb.collection('app_ponto/$nomeEmpresa/funcionarios');
+    var path = fb.collection('app_ponto/$idEmpresa/funcionarios');
 
     var funcionarios = await path.getDocuments();
 
@@ -39,7 +62,7 @@ class FirebaseHelper {
 
     var path = fb
         .collection('app_ponto')
-        .document(nomeEmpresa)
+        .document(idEmpresa)
         .collection('funcionarios')
         .document(registro.matricula)
         .collection(registro.data)

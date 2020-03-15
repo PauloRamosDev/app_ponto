@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:appponto/firebase/firebase_helper.dart';
 import 'package:appponto/pages/configuracao/Configuracao.dart';
 import 'package:appponto/pages/home/home_bloc.dart';
@@ -27,17 +25,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   BlocHome bloc = BlocHome();
 
-  @override
-  void initState() {
-    //buscar funcionarios no firebase e add no sqlite
-    FirebaseHelper('minhaEmpresa').getFuncionarios().then((listFun) {
-      listFun.forEach((funcionario) {
-        FuncionarioDAO().insert(funcionario);
-      });
-    });
-
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            Text(widget.prefs.getEmpresa() ?? ''), //nome da empresa
+            Text(widget.prefs.getEmpresa().nome ?? ''), //nome da empresa
             Card(
               margin: responsiveMargin(),
               elevation: 4,
@@ -202,7 +189,7 @@ class _HomePageState extends State<HomePage> {
 //            bloc.syncAll(widget.prefs.getEmpresa()).then((value) {
 //              widget.prefs.setNoSync(value);
 //            });
-            bloc.syncAll(widget.prefs.getEmpresa());
+            bloc.syncAll(widget.prefs.getEmpresa().id);
           }),
       animationType: BadgeAnimationType.slide,
       position: BadgePosition.topRight(top: -4, right: 1),

@@ -93,7 +93,7 @@ class _RegistroPageState extends State<RegistroPage> {
 
       await RegistroDAO().insert(registro);
 
-      FirebaseHelper('minhaEmpresa')
+      FirebaseHelper(widget.prefs.getEmpresa().id)
           .sync(await RegistroDAO().registrosNoSync())
           .then((registros) {
         widget.prefs.setNoSync(registros);

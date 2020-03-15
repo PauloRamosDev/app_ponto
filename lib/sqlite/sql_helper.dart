@@ -7,7 +7,7 @@ import 'package:path/path.dart';
 class SqliteHelper {
   static final SqliteHelper _instance = SqliteHelper.getInstance();
 
-  static const tableName = 'funcionarios';
+  static const tableFuncionario = 'funcionarios';
   static const tableRegistros = 'Registros';
 
   SqliteHelper.getInstance();
@@ -35,7 +35,7 @@ class SqliteHelper {
   }
 
   void _onCreate(Database db, int newVersion) async {
-    await db.execute('CREATE TABLE $tableName('
+    await db.execute('CREATE TABLE $tableFuncionario('
         'id INTEGER PRIMARY KEY,'
         'nome TEXT NOT NULL,'
         'senha TEXT NOT NULL,'
@@ -69,13 +69,13 @@ class SqliteHelper {
 
   Future<void> delete() async {
     var dbClient = await db;
-    await dbClient.delete('$tableName');
+    await dbClient.delete('$tableFuncionario');
   }
 
   void alterTable(nome, tipo) async {
     var bd = await db;
 
-    bd.execute('ALTER TABLE $tableName ADD $nome VARCHAR').catchError((error) {
+    bd.execute('ALTER TABLE $tableFuncionario ADD $nome VARCHAR').catchError((error) {
       print(error.toString());
     });
   }

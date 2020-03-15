@@ -63,11 +63,8 @@ class RegistroDAO {
   Future deleteAll() async {
     var dbClient = await db;
 
-    await dbClient
-        .rawQuery('DROP TABLE IF EXISTS ${SqliteHelper.tableRegistros}');
-
-    return await dbClient.rawQuery(
-        'CREATE TABLE IF NOT EXISTS ${SqliteHelper.tableName}(id INTEGER PRIMARY KEY)');
+    return await dbClient
+        .rawQuery('DELETE FROM ${SqliteHelper.tableRegistros}');
   }
 
   Future<int> count() async {
@@ -88,5 +85,15 @@ class RegistroDAO {
     }
 
     return null;
+  }  Future<bool> existNoSync() async {
+    var dbClient = await db;
+    final list = await dbClient.rawQuery(
+        'select * from ${SqliteHelper.tableRegistros} where sync = 0');
+
+    if (list.length > 0) {
+      return true;
+    }
+
+    return false;
   }
 }
