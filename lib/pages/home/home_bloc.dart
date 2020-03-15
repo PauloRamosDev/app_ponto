@@ -10,17 +10,17 @@ class BlocHome {
   Future<bool> validar() async {
     var func = await FuncionarioDAO().findByMatricula(matricula.text);
 
-    return func.senha == senha.text && func.matricula == matricula.text&&senha.text.length>3&&matricula.text.length>6;
+    return func?.senha == senha.text && func?.matricula == matricula.text&&senha.text.length>3&&matricula.text.length>6;
   }
 
-  Future<int> syncAll() async {
+  Future<int> syncAll(String empresa) async {
     var noSync = await RegistroDAO().registrosNoSync();
 
     print('no sync = ${noSync?.length}');
 
     if (noSync != null && noSync.length > 0) {
-      return await FirebaseHelper('minhaEmpresa').sync(noSync);
+      return await FirebaseHelper(empresa).sync(noSync);
     }
-    return null;
+    return 0;
   }
 }

@@ -1,20 +1,23 @@
 import 'package:appponto/models/funcionario_model.dart';
 import 'package:appponto/models/model_registro.dart';
 import 'package:appponto/sqlite/registro_dao.dart';
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FirebaseHelper {
+import '../preferences.dart';
 
+class FirebaseHelper {
   Firestore fb = Firestore.instance;
   final nomeEmpresa;
+  final prefs = BlocProvider.getBloc<Prefs>();
 
   FirebaseHelper(this.nomeEmpresa);
 
-  getEmpresa() async {
+  Future<Map<String, dynamic>> getEmpresa() async {
     //appName - empresa
     var path = fb.document('app_ponto/$nomeEmpresa');
 
-    return await path.get();
+    return (await path.get()).data;
   }
 
   Future<List<Funcionario>> getFuncionarios() async {
@@ -79,12 +82,13 @@ class FirebaseHelper {
       bool result = await setPonto(listaRegistros[i], listaRegistros[i].id);
       print(result);
 
-      if (!result) {
+      if (result) {
+        prefs.setNoSync(listaRegistros.length - (i + 1));
+      } else {
         erros++;
       }
     }
 
     return erros;
   }
-
 }

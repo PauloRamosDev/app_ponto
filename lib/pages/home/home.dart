@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:appponto/firebase/firebase_helper.dart';
+import 'package:appponto/pages/configuracao/Configuracao.dart';
 import 'package:appponto/pages/home/home_bloc.dart';
+import 'package:appponto/preferences.dart';
 import 'package:appponto/sqlite/funcionario_dao.dart';
 import 'package:appponto/sqlite/registro_dao.dart';
 import 'package:appponto/utils.dart';
 import 'package:badges/badges.dart';
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -11,30 +16,24 @@ import '../../nav.dart';
 import '../checkpoints/check_point.dart';
 
 class HomePage extends StatefulWidget {
+  final prefs = BlocProvider.getBloc<Prefs>();
+
+  HomePage();
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   BlocHome bloc = BlocHome();
-  var noSync = 0;
 
   @override
   void initState() {
     //buscar funcionarios no firebase e add no sqlite
-
-    FirebaseHelper('minhaEmpresa').getFuncionarios().then((value) {
-      value.forEach((element) {
-        FuncionarioDAO().insert(element);
+    FirebaseHelper('minhaEmpresa').getFuncionarios().then((listFun) {
+      listFun.forEach((funcionario) {
+        FuncionarioDAO().insert(funcionario);
       });
-    });
-
-//sync registro não sync
-//    bloc.syncAll();
-
-    RegistroDAO().registrosNoSync().then((value) {
-      noSync = value != null ? value.length : 0;
-      setState(() {});
     });
 
     super.initState();
@@ -48,7 +47,10 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         title: Text('App Ponto Fácil'),
         actions: <Widget>[
-          upload(),
+          Consumer<Prefs>(builder: (context, prefs) {
+            print('chamando o consumer PREFS');
+            return upload(prefs.getNoSync() > 0);
+          })
         ],
       ),
       body: SingleChildScrollView(
@@ -56,13 +58,16 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Center(
-              child: FlutterLogo(
-                size: 100,
-                colors: Colors.purple,
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Center(
+                child: FlutterLogo(
+                  size: 100,
+                  colors: Colors.purple,
+                ),
               ),
             ),
-            Text(''), //nome da empresa
+            Text(widget.prefs.getEmpresa() ?? ''), //nome da empresa
             Card(
               margin: responsiveMargin(),
               elevation: 4,
@@ -165,30 +170,42 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
+            ),
+            FlatButton(
+              onPressed: () {
+                push(context, PageConfiguracao());
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.settings),
+                  Text('Confirgurações')
+                ],
+              ),
             )
+            //nome da empresa
           ],
         ),
       ),
     );
   }
 
-  upload() {
-    return Visibility(
-      child: Badge(
-        badgeContent: Text(noSync.toString()),
-        badgeColor: Theme.of(context).accentColor,
-        child: IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () {
-              bloc.syncAll().then((value) {
-                noSync = value;
-                setState(() {});
-              });
-            }),
-        animationType: BadgeAnimationType.slide,
-        position: BadgePosition.topRight(top: 0, right: 8),
-      ),
-      visible: noSync > 0,
+  upload(bool show) {
+    print(show);
+    return Badge(
+      showBadge: show,
+      badgeContent: Text(widget.prefs.getNoSync().toString()),
+      badgeColor: Theme.of(context).accentColor,
+      child: IconButton(
+          icon: Icon(Icons.refresh),
+          onPressed: () {
+//            bloc.syncAll(widget.prefs.getEmpresa()).then((value) {
+//              widget.prefs.setNoSync(value);
+//            });
+            bloc.syncAll(widget.prefs.getEmpresa());
+          }),
+      animationType: BadgeAnimationType.slide,
+      position: BadgePosition.topRight(top: -4, right: 1),
     );
   }
 
@@ -196,7 +213,7 @@ class _HomePageState extends State<HomePage> {
     var larg = MediaQuery.of(context).size.width;
 
     if (larg > 400) {
-      return EdgeInsets.only(left: 100, right: 100, bottom: 100, top: 16);
+      return EdgeInsets.only(left: 80, right: 80, bottom: 80, top: 16);
     } else {
       return EdgeInsets.all(16);
     }

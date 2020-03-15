@@ -5,11 +5,18 @@ import 'package:appponto/pages/home/home.dart';
 import 'package:appponto/relogio.dart';
 import 'package:appponto/sqlite/registro_dao.dart';
 import 'package:appponto/utils.dart';
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
+import '../../firebase/firebase_helper.dart';
 import '../../models/model_registro.dart';
+import '../../preferences.dart';
+import '../../sqlite/registro_dao.dart';
 
 class RegistroPage extends StatefulWidget {
+  final prefs = BlocProvider.getBloc<Prefs>();
+
   final marcacao;
   final matricula;
   final BlocCheckPoint bloc;
@@ -49,6 +56,7 @@ class _RegistroPageState extends State<RegistroPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              svgIcon(widget.marcacao),
               Text(widget.marcacao),
               RaisedButton(
                 onPressed: () {
@@ -83,13 +91,50 @@ class _RegistroPageState extends State<RegistroPage> {
 
       print(registro.toMap().toString());
 
-      int idSqlite = await RegistroDAO().insert(registro);
+      await RegistroDAO().insert(registro);
 
-      var operacao = await FirebaseHelper('minhaEmpresa').setPonto(registro, idSqlite);
-
-      print('Operacao firebase = $operacao');
+      FirebaseHelper('minhaEmpresa')
+          .sync(await RegistroDAO().registrosNoSync())
+          .then((registros) {
+        widget.prefs.setNoSync(registros);
+        print('Operacao firebase = $registros');
+      });
 
       resetAndOpenPage(context, HomePage());
     }
+  }
+
+  svgIcon(marcacao) {
+    var asset;
+
+    switch (marcacao) {
+      case Registro.inicio:
+        {
+          asset = 'assets/svg/stopwatch3.svg';
+        }
+        break;
+
+      case Registro.inicioPausa:
+        {
+          asset = 'assets/svg/stopwatch.svg';
+        }
+        break;
+      case Registro.terminoPausa:
+        {
+          asset = 'assets/svg/stopwatch1.svg';
+        }
+        break;
+      case Registro.termino:
+        {
+          asset = 'assets/svg/stopwatch2.svg';
+        }
+        break;
+    }
+
+    return SvgPicture.asset(
+      asset,
+      width: 100,
+      height: 100,
+    );
   }
 }
