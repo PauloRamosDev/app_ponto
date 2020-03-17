@@ -3,8 +3,9 @@ class Funcionario {
   String nome;
   String matricula;
   String senha;
+  int ativo;
 
-  Funcionario(this.id, this.nome, this.matricula,this.senha);
+  Funcionario(this.id, this.nome, this.matricula,this.senha,this.ativo);
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
@@ -13,6 +14,7 @@ class Funcionario {
     map['nome'] = nome;
     map['matricula'] = matricula;
     map['senha'] = senha;
+    map['ativo'] = ativo;
 
     return map;
   }
@@ -22,5 +24,6 @@ class Funcionario {
     this.nome = map['nome'];
     this.matricula = map['matricula'];
     this.senha = map['senha'];
+    this.ativo = map['ativo'];
   }
 }

@@ -39,6 +39,7 @@ class SqliteHelper {
         'id INTEGER PRIMARY KEY,'
         'nome TEXT NOT NULL,'
         'senha TEXT NOT NULL,'
+        'ativo INTEGER NOT NULL,'
         'matricula TEXT NOT NULL UNIQUE'
         ')');
 

@@ -91,7 +91,7 @@ class ConfiguracaoEmpresa extends StatelessWidget {
               color: Theme.of(context).accentColor,
             ),
             Text('Empresa conectada'),
-            Text(provPrefs.getEmpresa().nome ?? 'Nenhuma'),
+            Text(provPrefs.getEmpresa()?.nome ?? 'Nenhuma'),
           ],
         ),
       ),

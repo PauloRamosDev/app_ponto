@@ -1,8 +1,7 @@
-import 'package:appponto/firebase/firebase_helper.dart';
 import 'package:appponto/pages/configuracao/Configuracao.dart';
+import 'package:appponto/pages/empresa/para_empresas.dart';
 import 'package:appponto/pages/home/home_bloc.dart';
 import 'package:appponto/preferences.dart';
-import 'package:appponto/sqlite/funcionario_dao.dart';
 import 'package:appponto/sqlite/registro_dao.dart';
 import 'package:appponto/utils.dart';
 import 'package:badges/badges.dart';
@@ -25,7 +24,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   BlocHome bloc = BlocHome();
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,15 +43,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Center(
-                child: FlutterLogo(
-                  size: 100,
-                  colors: Colors.purple,
-                ),
-              ),
-            ),
+            logo(),
             Text(widget.prefs.getEmpresa().nome ?? ''), //nome da empresa
             Card(
               margin: responsiveMargin(),
@@ -153,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                         'ENTRAR',
                         style: TextStyle(color: Colors.white),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -166,10 +156,22 @@ class _HomePageState extends State<HomePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Icon(Icons.settings),
-                  Text('Confirgurações')
+                  Text(' Confirgurações')
                 ],
               ),
-            )
+            ),
+            FlatButton(
+              onPressed: () {
+                push(context, HomeEmpresas());
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.business_center),
+                  Text(' Para empresas')
+                ],
+              ),
+            ),
             //nome da empresa
           ],
         ),
@@ -177,8 +179,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  upload(bool show) {
-    print(show);
+  responsiveMargin() {
+    var larg = MediaQuery.of(context).size.width;
+
+    if (larg > 400) {
+      return EdgeInsets.only(left: 80, right: 80, bottom: 80, top: 16);
+    } else {
+      return EdgeInsets.all(16);
+    }
+  }
+
+  Widget upload(bool show) {
     return Badge(
       showBadge: show,
       badgeContent: Text(widget.prefs.getNoSync().toString()),
@@ -196,13 +207,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  responsiveMargin() {
-    var larg = MediaQuery.of(context).size.width;
-
-    if (larg > 400) {
-      return EdgeInsets.only(left: 80, right: 80, bottom: 80, top: 16);
-    } else {
-      return EdgeInsets.all(16);
-    }
+  Widget logo() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Center(
+        child: Image.network(
+          widget.prefs.getEmpresa()?.logo,
+          height: 100,
+        ),
+      ),
+    );
   }
 }
