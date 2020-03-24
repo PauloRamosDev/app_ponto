@@ -8,9 +8,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../preferences.dart';
 
 class FirebaseHelper {
+  final prefs = BlocProvider.getBloc<Prefs>();
+
   Firestore fb = Firestore.instance;
   final idEmpresa;
-  final prefs = BlocProvider.getBloc<Prefs>();
 
   FirebaseHelper(this.idEmpresa);
 
@@ -53,6 +54,14 @@ class FirebaseHelper {
     return funcionarios.documents
         .map((snapshot) => Funcionario.fromMap(snapshot.data))
         .toList();
+  }
+
+  Future<bool> setFuncionarios(Funcionario fun) async {
+    //appName - empresa - funcionarios
+
+    var path = fb.document('app_ponto/$idEmpresa/funcionarios/${fun.matricula}');
+
+    path.setData(fun.toMap()).catchError((onError)=>null);
   }
 
   Future<bool> setPonto(Registro registro, int idSqlite) async {

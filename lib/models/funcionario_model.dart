@@ -3,9 +3,9 @@ class Funcionario {
   String nome;
   String matricula;
   String senha;
-  int ativo;
+  int ativo; // 1 ativo 0 inativo
 
-  Funcionario(this.id, this.nome, this.matricula,this.senha,this.ativo);
+  Funcionario(this.id, this.nome, this.matricula,this.senha,{this.ativo = 1});
 
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
