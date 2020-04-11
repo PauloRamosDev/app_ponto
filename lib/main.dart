@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
   Widget _handleCurrentScreen() {
     bool empresa = (prefs.containsKey('empresa') ?? false);
 
-    if (empresa) {
+    if (!empresa) {
       return HomePage();
     } else {
       return PageConfiguracao();
